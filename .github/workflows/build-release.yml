@@ -1,0 +1,62 @@
+name: Build and Release VETTRYX WP Core
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'vettryx-wp-portfolio-core.php' # Dispara a ação quando o arquivo principal do plugin for atualizado
+  repository_dispatch:
+    types: [update-modules]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Atualiza os submódulos (Módulos do Core)
+        run: |
+          git submodule update --remote --checkout --force
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore: atualizando módulos via automação [skip ci]" || echo "Nenhuma mudança nos módulos"
+          git push || echo "Nada para fazer push"
+
+      - name: Extrai a versão do plugin
+        id: extract_version
+        run: |
+          # Extrai a versão do plugin a partir do arquivo principal do plugin
+          VERSION=$(grep -i "Version:" vettryx-wp-portfolio-core.php | head -n 1 | awk -F':' '{print $2}' | xargs)
+          echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Prepara o Plugin para Release
+        run: |
+          # 1. Cria a pasta exigida pelo WordPress
+          mkdir vettryx-wp-portfolio-core
+          
+          # 2. Copia os arquivos necessários para dentro da pasta (mantendo a estrutura)
+          cp vettryx-wp-portfolio-core.php vettryx-wp-portfolio-core/
+          [ -d "assets" ] && cp -r assets/ vettryx-wp-portfolio-core/
+          [ -d "includes" ] && cp -r includes/ vettryx-wp-portfolio-core/
+          [ -d "modules" ] && cp -r modules/ vettryx-wp-portfolio-core/
+          [ -d "vendor" ] && cp -r vendor/ vettryx-wp-portfolio-core/
+          
+          # 3. Cria o arquivo ZIP do plugin
+          zip -r vettryx-wp-portfolio-core.zip vettryx-wp-portfolio-core/
+
+      - name: Publica a Release no GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: vettryx-wp-portfolio-core.zip
+          tag_name: "v${{ env.PLUGIN_VERSION }}"
+          name: "VETTRYX WP Portfolio Core - v${{ env.PLUGIN_VERSION }}"
+          
