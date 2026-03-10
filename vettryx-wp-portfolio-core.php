@@ -3,7 +3,7 @@
  * Plugin Name: VETTRYX WP Portfolio Core
  * Plugin URI:  https://github.com/vettryx/vettryx-wp-portfolio-core
  * Description: Plugin Core para o site da VETTRYX. Gerencia Portfólio, Skills e Shortcodes Institucionais.
- * Version:     1.2.0
+ * Version:     1.3.0
  * Author:      VETTRYX Tech
  * Author URI:  https://vettryx.com.br
  * License:     GPLv3 or later
@@ -30,7 +30,6 @@ if (file_exists($puc_file)) {
 // Carrega os módulos da pasta includes
 require_once plugin_dir_path(__FILE__) . 'includes/post-types.php';
 require_once plugin_dir_path(__FILE__) . 'includes/meta-boxes.php';
-require_once plugin_dir_path(__FILE__) . 'includes/shortcodes.php';
 
 /**
  * Declaração de conformidade com a API de Consentimento

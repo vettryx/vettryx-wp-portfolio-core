@@ -1,69 +1,50 @@
 # VETTRYX WP Portfolio Core
 
-> O motor central de funcionalidades para o ecossistema digital da VETTRYX Tech.
+> O motor de dados estruturados para o portfólio digital da VETTRYX Tech.
 
-Este plugin atua como o **Core Plugin** do site institucional da VETTRYX. Ele foi desenvolvido para desacoplar a lógica de negócios (Portfólio, Skills e Identidade) do tema visual (Elementor/Divi), garantindo que os dados permaneçam intactos independentemente de mudanças no design.
+Este plugin atua como o **Core Data Provider** do site institucional da VETTRYX. Ele foi reestruturado sob o conceito de *Separation of Concerns* (Separação de Responsabilidades), desacoplando totalmente a lógica de banco de dados da renderização visual. 
+
+O plugin foca exclusivamente em fornecer a infraestrutura de dados (Projetos e Skills), enquanto o design e a vitrine ficam a cargo do Theme Builder (Elementor), garantindo máxima performance e flexibilidade.
 
 ## 🚀 Funcionalidades
 
 * **Custom Post Types (CPT):**
   * `projects`: Gerenciamento de portfólio com suporte a editor clássico e imagem destacada.
   * `skills`: Cadastro de habilidades técnicas.
-* **Campos Personalizados (Meta Boxes):**
-  * Campos nativos para inserção de *URL do Projeto* e *Nome da Empresa/Cliente* sem depender de plugins pesados como ACF.
-* **Shortcodes Institucionais:**
-  * Vitrine de projetos automática (Grid CSS).
-  * Copyright com atualização automática de ano.
-  * Créditos de desenvolvimento com consumo de API externa.
-* **Arquitetura Modular:** Código organizado em módulos (includes) para fácil manutenção.
+* **Campos Personalizados (Meta Boxes Nativos):**
+  * Campos leves em puro PHP para inserção de *URL do Projeto* e *Nome da Empresa/Cliente*, eliminando a dependência de plugins pesados como ACF.
+* **Atualizações Automáticas (CI/CD):**
+  * Integração nativa com o GitHub via Plugin Update Checker (PUC). Atualizações enviadas para a branch `main` são distribuídas automaticamente para o painel do WordPress.
+* **Conformidade LGPD:**
+  * Declaração de conformidade pronta para a WP Consent API.
 
 ## 📂 Estrutura do Projeto
 
-O plugin segue uma estrutura limpa para facilitar a escalabilidade:
+A arquitetura foi limpa para manter apenas o essencial para a modelagem de dados:
 
-```text
 vettryx-wp-portfolio-core/
 ├── includes/
-│   ├── meta-boxes.php    # Gerenciamento de campos personalizados (Admin)
-│   ├── post-types.php    # Registro de CPTs (Projetos e Skills)
-│   └── shortcodes.php    # Renderização de componentes no Front-end
-├── vettryx-wp-portfolio-core.php  # Arquivo mestre (Loader)
+│   ├── meta-boxes.php          # Gerenciamento de campos personalizados (Admin)
+│   └── post-types.php          # Registro de CPTs (Projetos e Skills)
+├── plugin-update-checker/      # Biblioteca de atualizações OTA via GitHub
+├── vettryx-wp-portfolio-core.php # Arquivo mestre (Loader)
 └── README.md
-````
 
-## 🛠️ Instalação
+## 🛠️ Instalação e Deploy
 
-1. Faça o download do arquivo `.zip` deste repositório (ou clone na pasta de plugins).
+O gerenciamento de versão é automatizado. Para a primeira instalação:
+1. Faça o download do arquivo `.zip` deste repositório.
 2. No painel do WordPress, vá em **Plugins > Adicionar Novo > Enviar Plugin**.
 3. Faça o upload e clique em **Ativar**.
-4. Os menus "Projetos" e "Skills" aparecerão automaticamente na barra lateral.
+4. Os menus "Projetos" e "Skills" aparecerão automaticamente na barra lateral administrativa.
+5. As próximas atualizações chegarão automaticamente no painel de Atualizações do WordPress.
 
-## 💻 Documentação dos Shortcodes
+## 💻 Integração com o Front-end (Elementor)
 
-Utilize os shortcodes abaixo dentro do Elementor ou Editor de Blocos:
+Como este plugin é focado em dados (*Headless approach* para o tema), a renderização visual deve ser feita através do seu Page Builder:
 
-### 1. Vitrine de Projetos
-
-Exibe um grid responsivo com os últimos projetos cadastrados, incluindo imagem, título, resumo e link.
-`[vitrine_vettryx]`
-
-### 2. Rodapé Dinâmico (Copyright)
-
-Exibe o símbolo de copyright, o ano atual (automático via PHP) e o nome do site configurado.
-`[vettryx_copyright]`
-*Saída:* © 2026 VETTRYX Tech. Todos os direitos reservados.
-
-### 3. Assinatura do Desenvolvedor
-
-Exibe os créditos. Possui dois modos de operação:
-
-**Modo Interno (Para o site da agência):**
-Linka diretamente para o perfil do desenvolvedor (André Ventura).
-`[vettryx_developer modo="interno"]`
-
-**Modo Cliente (Para sites de terceiros):**
-Busca o nome da VETTRYX via API JSON para garantir que a marca esteja sempre atualizada, com cache de 24h para performance.
-`[vettryx_developer modo="cliente"]`
+* **Vitrine de Projetos:** Utilize o recurso **Loop Builder** ou o widget de **Posts** do Elementor Pro, apontando a "Fonte" para o CPT `Projetos`.
+* **Assinatura e Copyright:** Utilize o plugin **VETTRYX WP Core** em conjunto com este. Insira o shortcode `[vettryx_developer modo="interno"]` no rodapé do Elementor para puxar os créditos unificados do ecossistema.
 
 ## 📝 Requisitos
 
